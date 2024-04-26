@@ -1,36 +1,31 @@
 package com.bookstore.services;
 
 import com.bookstore.domain.Book;
+import com.bookstore.dto.BookDTO;
 import com.bookstore.repositories.BookRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class BookService {
+    @Autowired
     private final BookRepository bookRepository;
 
-    public Book createBook(Book book) {
-        this.bookRepository.save(book);
-        return book;
+    public Book createBook(BookDTO book) {
+        Book newBook = new Book(book);
+        return bookRepository.save(newBook);
     }
 
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
     }
 
-    public Book getBookById(Long id) {
-        return this.bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Não encontrado."));
-    }
-
-    public Book updateBook(Book book) {
-        return bookRepository.save(book);
-    }
-
     public void deleteBook(Long id) {
-        this.bookRepository.deleteById(id);
+        Book existingBook = bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
+        bookRepository.delete(existingBook);
     }
 }

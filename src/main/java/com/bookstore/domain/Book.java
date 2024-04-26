@@ -1,12 +1,10 @@
 package com.bookstore.domain;
 
+import com.bookstore.dto.BookDTO;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Entity
+@Entity(name = "books")
 @Table(name = "books")
 @Getter
 @Setter
@@ -22,4 +20,9 @@ public class Book {
 
     @Column(nullable = false)
     private String author;
+
+    public Book(BookDTO book) {
+        this.title = book.title();
+        this.author = book.author();
+    }
 }
