@@ -18,13 +18,19 @@ public class BookController {
     private final BookService bookService;
 
     @PostMapping
-    public Book createBook(@RequestBody BookDTO book){
+    public Book createBook(@RequestBody BookDTO book) {
         return bookService.createBook(book);
     }
 
     @GetMapping
     public List<Book> getAllBooks() {
         return bookService.getAllBooks();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody BookDTO bookDTO) {
+        Book updatedBook = bookService.updateBook(id, bookDTO);
+        return ResponseEntity.ok(updatedBook);
     }
 
     @DeleteMapping("/{id}")

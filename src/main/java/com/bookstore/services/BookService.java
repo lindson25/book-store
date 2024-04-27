@@ -20,6 +20,15 @@ public class BookService {
         return bookRepository.save(newBook);
     }
 
+    public Book updateBook(Long id, BookDTO bookDTO) {
+        Book book = bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
+
+        book.setTitle(bookDTO.title());
+        book.setAuthor(bookDTO.author());
+
+        return bookRepository.save(book);
+    }
+
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
     }
