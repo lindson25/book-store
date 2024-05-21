@@ -1,6 +1,5 @@
 package com.bookstore.domain;
 
-import com.bookstore.dto.BookDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,9 +19,4 @@ public class Book {
 
     @Column(nullable = false)
     private String author;
-
-    public Book(BookDTO book) {
-        this.title = book.title();
-        this.author = book.author();
-    }
 }

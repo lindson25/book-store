@@ -1,7 +1,6 @@
 package com.bookstore.controllers;
 
 import com.bookstore.domain.Book;
-import com.bookstore.dto.BookDTO;
 import com.bookstore.services.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,7 @@ public class BookController {
     private final BookService bookService;
 
     @PostMapping
-    public Book createBook(@RequestBody BookDTO book) {
+    public Book createBook(@RequestBody Book book) {
         return bookService.createBook(book);
     }
 
@@ -28,8 +27,8 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody BookDTO bookDTO) {
-        Book updatedBook = bookService.updateBook(id, bookDTO);
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book book) {
+        Book updatedBook = bookService.updateBook(id, book);
         return ResponseEntity.ok(updatedBook);
     }
 

@@ -1,7 +1,6 @@
 package com.bookstore.services;
 
 import com.bookstore.domain.Book;
-import com.bookstore.dto.BookDTO;
 import com.bookstore.repositories.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,16 +14,15 @@ public class BookService {
     @Autowired
     private final BookRepository bookRepository;
 
-    public Book createBook(BookDTO book) {
-        Book newBook = new Book(book);
+    public Book createBook(Book newBook) {
         return bookRepository.save(newBook);
     }
 
-    public Book updateBook(Long id, BookDTO bookDTO) {
+    public Book updateBook(Long id, Book bookk) {
         Book book = bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
 
-        book.setTitle(bookDTO.title());
-        book.setAuthor(bookDTO.author());
+        book.setTitle(bookk.getTitle());
+        book.setAuthor(bookk.getAuthor());
 
         return bookRepository.save(book);
     }
