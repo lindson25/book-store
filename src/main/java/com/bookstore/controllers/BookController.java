@@ -25,12 +25,14 @@ public class BookController {
     @Autowired
     private final BookService bookService;
 
+    //Anotações do swagger para o post
     @Operation(summary = "Criar um livro", description = "Cria um livro de acordo com os parâmetros enviados")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Livro criado com sucesso",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = Book.class))),
             @ApiResponse(responseCode = "400", description = "Parâmetros inválidos")
     })
+
     @PostMapping
     public ResponseEntity<Book> createBook(
             @Parameter(description = "Objeto do livro a ser criado", required = true, schema = @Schema(implementation = Book.class))
@@ -39,17 +41,20 @@ public class BookController {
         return ResponseEntity.ok(createdBook);
     }
 
+    //Anotações do swagger para o get
     @Operation(summary = "Retornar todos os livros", description = "Retorna todos os livros que estão no banco de dados")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Livros listados com sucesso",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = Book.class))),
     })
+
     @GetMapping
     public ResponseEntity<List<Book>> getAllBooks() {
         List<Book> books = bookService.getAllBooks();
         return ResponseEntity.ok(books);
     }
 
+    //Anotações do swagger para o put
     @Operation(summary = "Atualizar um livro", description = "Atualiza um livro já existente através do ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Livro atualizado com sucesso",
@@ -57,6 +62,7 @@ public class BookController {
             @ApiResponse(responseCode = "500", description = "Livro com o id não encontrado"),
             @ApiResponse(responseCode = "404", description = "ID inválido")
     })
+
     @PutMapping("/{id}")
     public ResponseEntity<Book> updateBook(
             @Parameter(description = "ID do livro a ser atualizado", required = true)
@@ -67,12 +73,14 @@ public class BookController {
         return ResponseEntity.ok(updatedBook);
     }
 
+    //Anotações do swagger para o delete
     @Operation(summary = "Deletar um livro", description = "Deleta um livro através do ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Livro deletado com sucesso"),
             @ApiResponse(responseCode = "500", description = "Livro não encontrado"),
             @ApiResponse(responseCode = "404", description = "ID inválido")
     })
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteBook(
             @Parameter(description = "ID do livro a ser deletado", required = true)

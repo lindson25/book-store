@@ -1,6 +1,7 @@
 package com.bookstore.services;
 
 import com.bookstore.domain.Book;
+import com.bookstore.exceptions.NotFoundException;
 import com.bookstore.repositories.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +19,11 @@ public class BookService {
         return bookRepository.save(newBook);
     }
 
-    public Book updateBook(Long id, Book bookk) {
-        Book book = bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
+    public Book updateBook(Long id, Book newBook) {
+        Book book = bookRepository.findById(id).orElseThrow(() -> new NotFoundException("Book not found with id: " + id));
 
-        book.setTitle(bookk.getTitle());
-        book.setAuthor(bookk.getAuthor());
+        book.setTitle(newBook.getTitle());
+        book.setAuthor(newBook.getAuthor());
 
         return bookRepository.save(book);
     }
@@ -32,7 +33,7 @@ public class BookService {
     }
 
     public void deleteBook(Long id) {
-        Book existingBook = bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
+        Book existingBook = bookRepository.findById(id).orElseThrow(() -> new NotFoundException("Book not found with id: " + id));
         bookRepository.delete(existingBook);
     }
 }
