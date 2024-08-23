@@ -1,39 +1,58 @@
 package com.bookstore.services;
 
-import com.bookstore.domain.Book;
-import com.bookstore.exceptions.NotFoundException;
+import com.bookstore.domain.book.Book;
+import com.bookstore.domain.book.BookDTO;
+import com.bookstore.exceptions.BookNotFoundException;
 import com.bookstore.repositories.BookRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class BookService {
+
     @Autowired
-    private final BookRepository bookRepository;
+    private BookRepository bookRepository;
 
-    public Book createBook(Book newBook) {
-        return bookRepository.save(newBook);
+    public BookDTO toDTO(Book entity) {
+        return new BookDTO(entity.getTitle(), entity.getAuthor());
     }
 
-    public Book updateBook(Long id, Book newBook) {
-        Book book = bookRepository.findById(id).orElseThrow(() -> new NotFoundException("Book not found with id: " + id));
-
-        book.setTitle(newBook.getTitle());
-        book.setAuthor(newBook.getAuthor());
-
-        return bookRepository.save(book);
+    public BookDTO createBook(BookDTO bookDTO) {
+        Book book = new Book();
+        book.setAuthor(bookDTO.author());
+        book.setTitle(bookDTO.title());
+        bookRepository.save(book);
+        return toDTO(book);
     }
 
-    public List<Book> getAllBooks() {
-        return bookRepository.findAll();
+    public BookDTO findBookById(Long id) {
+        Book book = bookRepository.findById(id)
+                .orElseThrow(BookNotFoundException::new);
+        return toDTO(book);
     }
 
-    public void deleteBook(Long id) {
-        Book existingBook = bookRepository.findById(id).orElseThrow(() -> new NotFoundException("Book not found with id: " + id));
-        bookRepository.delete(existingBook);
+    public List<BookDTO> findAllBooks() {
+        return bookRepository.findAll().stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public BookDTO updateBook(Long id, BookDTO bookDTO) {
+        Book book = bookRepository.findById(id)
+                .orElseThrow(BookNotFoundException::new);
+        book.setTitle(bookDTO.title());
+        book.setAuthor(bookDTO.author());
+        bookRepository.save(book);
+        return toDTO(book);
+    }
+
+    public void deleteBookById(Long id) {
+        if (!bookRepository.existsById(id)) {
+            throw new BookNotFoundException();
+        }
+        bookRepository.deleteById(id);
     }
 }

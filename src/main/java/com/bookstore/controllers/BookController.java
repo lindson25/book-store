@@ -1,15 +1,7 @@
 package com.bookstore.controllers;
 
-import com.bookstore.domain.Book;
+import com.bookstore.domain.book.BookDTO;
 import com.bookstore.services.BookService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,75 +9,39 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/books")
-@Tag(name = "Book Store", description = "Operações CRUD para gerenciamento de uma livraria")
 public class BookController {
 
     @Autowired
-    private final BookService bookService;
-
-    //Anotações do swagger para o post
-    @Operation(summary = "Criar um livro", description = "Cria um livro de acordo com os parâmetros enviados")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Livro criado com sucesso",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Book.class))),
-            @ApiResponse(responseCode = "400", description = "Parâmetros inválidos")
-    })
+    private BookService bookService;
 
     @PostMapping
-    public ResponseEntity<Book> createBook(
-            @Parameter(description = "Objeto do livro a ser criado", required = true, schema = @Schema(implementation = Book.class))
-            @RequestBody Book book) {
-        Book createdBook = bookService.createBook(book);
-        return ResponseEntity.ok(createdBook);
+    public ResponseEntity<BookDTO> createBook(@RequestBody BookDTO bookDTO) {
+        BookDTO createdBook = bookService.createBook(bookDTO);
+        return ResponseEntity.ok().body(createdBook);
     }
-
-    //Anotações do swagger para o get
-    @Operation(summary = "Retornar todos os livros", description = "Retorna todos os livros que estão no banco de dados")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Livros listados com sucesso",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Book.class))),
-    })
 
     @GetMapping
-    public ResponseEntity<List<Book>> getAllBooks() {
-        List<Book> books = bookService.getAllBooks();
-        return ResponseEntity.ok(books);
+    public ResponseEntity<List<BookDTO>> getBooks() {
+        List<BookDTO> books = bookService.findAllBooks();
+        return ResponseEntity.ok().body(books);
     }
 
-    //Anotações do swagger para o put
-    @Operation(summary = "Atualizar um livro", description = "Atualiza um livro já existente através do ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Livro atualizado com sucesso",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Book.class))),
-            @ApiResponse(responseCode = "500", description = "Livro com o id não encontrado"),
-            @ApiResponse(responseCode = "404", description = "ID inválido")
-    })
+    @GetMapping("/{id}")
+    public ResponseEntity<BookDTO> getBookById(@PathVariable Long id) {
+        BookDTO book = bookService.findBookById(id);
+        return ResponseEntity.ok().body(book);
+    }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(
-            @Parameter(description = "ID do livro a ser atualizado", required = true)
-            @PathVariable Long id,
-            @Parameter(description = "Objeto do livro com as novas informações", required = true, schema = @Schema(implementation = Book.class))
-            @RequestBody Book book) {
-        Book updatedBook = bookService.updateBook(id, book);
-        return ResponseEntity.ok(updatedBook);
+    public ResponseEntity<BookDTO> updateBook(@PathVariable Long id, @RequestBody BookDTO bookDTO) {
+        BookDTO updatedBook = bookService.updateBook(id, bookDTO);
+        return ResponseEntity.ok().body(updatedBook);
     }
 
-    //Anotações do swagger para o delete
-    @Operation(summary = "Deletar um livro", description = "Deleta um livro através do ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Livro deletado com sucesso"),
-            @ApiResponse(responseCode = "500", description = "Livro não encontrado"),
-            @ApiResponse(responseCode = "404", description = "ID inválido")
-    })
-
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteBook(
-            @Parameter(description = "ID do livro a ser deletado", required = true)
-            @PathVariable Long id) {
-        bookService.deleteBook(id);
+    public ResponseEntity<?> deleteBook(@PathVariable Long id) {
+        bookService.deleteBookById(id);
         return ResponseEntity.ok().build();
     }
 }
